@@ -1,0 +1,22 @@
+# Desktop tools (OpenCV is only used here, never by the engine library).
+function(rppg_app name)
+  add_executable(${name} ${ARGN})
+  target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/common ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(${name} PRIVATE rppg ${OpenCV_LIBS})
+  if(WIN32)
+    # Copy runtime DLLs (ONNX Runtime, OpenCV world + FFmpeg plugin) next to the executable.
+    foreach(dll ${RPPG_ORT_RUNTIME_DLLS})
+      add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${dll}" $<TARGET_FILE_DIR:${name}>)
+    endforeach()
+    file(GLOB _cv_dlls "${OpenCV_DIR}/x64/vc16/bin/opencv_world*.dll" "${OpenCV_DIR}/x64/vc16/bin/opencv_videoio_*.dll")
+    foreach(dll ${_cv_dlls})
+      if(NOT dll MATCHES "d\\.dll$")
+        add_custom_command(TARGET ${name} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${dll}" $<TARGET_FILE_DIR:${name}>)
+      endif()
+    endforeach()
+  endif()
+endfunction()
+
+rppg_app(rppg_cli rppg_cli/main.cpp)
+rppg_app(rppg_bench rppg_bench/main.cpp)
+rppg_app(rppg_live rppg_live/main.cpp)
