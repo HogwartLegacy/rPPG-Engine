@@ -22,7 +22,6 @@ pose-aware quality-weighted fusion, HMM heart-rate tracking and a signal-quality
 Speed: 52 fps (19 ms/frame) on one desktop CPU core for face mesh + both networks + analysis
 (i7-12700, 640×480, incl. video decoding); 68 fps for the lite preset.
 
-> Not a medical device. Research / wellness use only.
 
 ## Pipeline
 
